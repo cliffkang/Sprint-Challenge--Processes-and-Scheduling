@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <errno.h>
 
 #define PROMPT "lambda-shell$ "
 
@@ -89,6 +90,19 @@ int main(void)
             break;
         }
 
+        if (strcmp(args[0], "cd") == 0) {
+            if (args_count != 2) {
+                fprintf(stderr, "not valid cd statement\n");
+                continue;
+            }
+            if (chdir(args[1]) == -1) {
+                perror("chdir");
+            } else {
+                chdir(args[1]);
+            }
+            continue;
+        }
+
         #if DEBUG
 
         // Some debugging output
@@ -110,10 +124,6 @@ int main(void)
             printf("error executing child\n");
         } else {
             int wc = waitpid(rc, NULL, 0);
-            printf("now all done\n");
-        }
-        for (int j = 0; j < args_count; j++) {
-
         }
     }
 
