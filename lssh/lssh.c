@@ -78,7 +78,7 @@ int main(void)
 
         // Parse input into individual arguments
         parse_commandline(commandline, args, &args_count);
-
+        
         if (args_count == 0) {
             // If the user entered no commands, do nothing
             continue;
@@ -101,7 +101,20 @@ int main(void)
         #endif
         
         /* Add your code for implementing the shell's logic here */
-        
+        int rc = fork();
+        if (rc < 0) {
+            fprintf(stderr, "fork failed\n");
+            exit(1);
+        } else if (rc == 0) {
+            execvp(args[0], args);
+            printf("error executing child\n");
+        } else {
+            int wc = waitpid(rc, NULL, 0);
+            printf("now all done\n");
+        }
+        for (int j = 0; j < args_count; j++) {
+
+        }
     }
 
     return 0;
