@@ -63,6 +63,8 @@ int main(void)
     // How many command line args the user typed
     int args_count;
 
+    int background;
+
     // Shell loops forever (until we tell it to exit)
     while (1) {
         // Print a prompt
@@ -103,6 +105,10 @@ int main(void)
             continue;
         }
 
+        if (strcmp(args[args_count - 1], "&") == 0) {
+            background = 1;
+        }
+
         #if DEBUG
 
         // Some debugging output
@@ -123,8 +129,15 @@ int main(void)
             execvp(args[0], args);
             printf("error executing child\n");
         } else {
+            if (background == 1) {
+                background = 0;
+                continue;
+            }
             int wc = waitpid(rc, NULL, 0);
         }
+
+        while (waitpid(-1, NULL< WNOHANG) > 0)
+            ;
     }
 
     return 0;
