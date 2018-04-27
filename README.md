@@ -7,11 +7,19 @@ Add your answers inline, below, with your pull request.
 1. List all of the main states a process may be in at any point in time on a
    standard Unix system. Briefly explain what each of these states mean.
 
+   Created (moved from storage to memory), Switch (in a queue setting), Blocking (waiting for another resource), running (processing), terminated (done).
+
 2. What is a Zombie Process? How does it get created? How does it get destroyed?
+
+   A child process gets turned into a zombie as soon as it finishes, until the parent terminates the process (which usually happens quickly). 
 
 3. Describe the job of the Scheduler in the OS in general.
 
+   The scheduler basically decides what process gets processed when.
+
 4. Describe the benefits of the MLFQ over a plain Round-Robin scheduler.
+
+   It allows for quick high-priority items to get completed sooner.
 
 ## Programming Exercise: The Lambda School Shell (`lssh`)
 
