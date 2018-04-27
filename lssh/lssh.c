@@ -3,12 +3,19 @@
 #include <unistd.h>
 #include <string.h>
 #include <errno.h>
+#include <signal.h>
 
 #define PROMPT "lambda-shell$ "
 
 #define MAX_TOKENS 100
 #define COMMANDLINE_BUFSIZE 1024
-#define DEBUG 1  // Set to 1 to turn on some debugging output, or 0 to turn off
+#define DEBUG 0  // Set to 1 to turn on some debugging output, or 0 to turn off
+
+void handle_sigchld(int sig) {
+    (void)sig;
+    while (waitpid(-1, NULL< WNOHANG) > 0)
+        ;
+}
 
 /**
  * Parse the command line.
@@ -63,7 +70,7 @@ int main(void)
     // How many command line args the user typed
     int args_count;
 
-    int background;
+    signal(SIGCHLD, handle_sigchld);
 
     // Shell loops forever (until we tell it to exit)
     while (1) {
@@ -105,8 +112,10 @@ int main(void)
             continue;
         }
 
+        int background = 0;
         if (strcmp(args[args_count - 1], "&") == 0) {
             background = 1;
+            args[args_count - 1] = NULL;
         }
 
         #if DEBUG
@@ -129,15 +138,10 @@ int main(void)
             execvp(args[0], args);
             printf("error executing child\n");
         } else {
-            if (background == 1) {
-                background = 0;
-                continue;
+            if (!background) {
+                int wc = waitpid(rc, NULL, 0);
             }
-            int wc = waitpid(rc, NULL, 0);
         }
-
-        while (waitpid(-1, NULL< WNOHANG) > 0)
-            ;
     }
 
     return 0;
